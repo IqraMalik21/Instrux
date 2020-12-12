@@ -1,0 +1,42 @@
+.alertCircle{
+	background: url('../../images/circle.png');
+	width: 24px;
+	height: 24px;
+	background-color: #9c2525;
+	background-size: cover;
+	background-repeat:   no-repeat;
+	background-position: center center;
+}
+
+.form-group input[type="checkbox"] {
+    display: none;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span {
+    width: 20px;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span:first-child {
+    display: none;
+}
+.form-group input[type="checkbox"] + .btn-group > label span:last-child {
+    display: inline-block;   
+}
+
+.form-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
+    display: inline-block;
+}
+.form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
+    display: none;   
+}
+
+label.chartEnableButton.btn.btn-secondary {
+    box-shadow: none;
+}
+label.chartEnableButton.btn.btn-secondary.active {
+	background: #218838;
+	color: #fff;
+    background-color: #218838;
+    border-color: #1e7e34;
+    box-shadow: none;
+}
