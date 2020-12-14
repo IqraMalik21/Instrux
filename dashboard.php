@@ -34,7 +34,11 @@ require_once 'includes.php';
                    success:function(response){
                        
                        alert(response);
-                       $("#response").html(response);
+                       var JSONStr = response;
+                       var JSONObj = JSON.parse(JSONStr);
+                       console.log(JSONObj);      // Dump all data of the Object in the console
+                       //alert(JSONObj[0]["name"])
+                       $("#response").html(JSONObj[0]["name"]);
                    }
                }) ;
             });

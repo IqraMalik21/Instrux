@@ -7,19 +7,21 @@
 
 <?php
 // Multidimensional array
-$superheroes = array(
-    "spider-man" => array(
-        "name" => "Peter Parker",
-        "email" => "peterparker@mail.com",
-    ),
-    "super-man" => array(
-        "name" => "Clark Kent",
-        "email" => "clarkkent@mail.com",
-    ),
-    "iron-man" => array(
-        "name" => "Harry Potter",
-        "email" => "harrypotter@mail.com",
-    )
+$superheroes = Array ( 
+    [0] => Array ( 
+        [id] => 7 
+        [0] => 7 
+        [name] => Services Department 
+        [1] => Services Department 
+        [parent_location_id] => 12 
+        [2] => 12 ) 
+    [1] => Array ( 
+        [id] => 13 
+        [0] => 13 
+        [name] => Electronic Engineering Department 
+        [1] => Electronic Engineering Department 
+        [parent_location_id] => 12 
+        [2] => 12 ) 
 );
 // foreach($superheroes as $n => $val) {
 //     echo "$n = $val<br>";
