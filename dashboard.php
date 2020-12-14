@@ -36,9 +36,21 @@ require_once 'includes.php';
                        alert(response);
                        var JSONStr = response;
                        var JSONObj = JSON.parse(JSONStr);
-                       console.log(JSONObj);      // Dump all data of the Object in the console
+                       //console.log(JSONObj);      // Dump all data of the Object in the console
                        //alert(JSONObj[0]["name"])
-                       $("#response").html(JSONObj[0]["name"]);
+                       //$("#response").html(response);
+                       var i=0;
+                      JSONObj.forEach(myFunction);
+                      //document.getElementById("response").innerHTML = i;
+                      function myFunction(value, index, array) {
+                      i++;
+                      }
+                      var locName = new Array();
+                      for (var j=0;j<i;j++){
+                          locName[j]=JSONObj[j]["name"];
+                      }
+                      alert(locName);
+
                    }
                }) ;
             });
