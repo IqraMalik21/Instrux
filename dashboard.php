@@ -49,12 +49,14 @@ require_once 'includes.php';
                       for (var j=0;j<i;j++){
                           locName[j]=JSONObj[j]["name"];
                       }
-                      alert(locName);
-
+                      displayCards(locName);
                    }
                }) ;
             });
          });
+         function displayCards(locName){
+          $("#response").html(locName);
+         }
 
        
       </script>
