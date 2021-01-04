@@ -53,7 +53,7 @@
       -webkit-transition: width 0.3s linear;
       transition: width 0.3s linear;
       width: calc(100% - 200px);
-      background-color: white;
+      background-color: #F7F7F7;
       min-height: 100vh;
       padding-bottom: 50px;
       }

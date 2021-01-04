@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="cards.css">
     <style>
       body{
-        background-color: white !important;
+        background-color: #F7F7F7 !important;
       }
     </style>
 <?php

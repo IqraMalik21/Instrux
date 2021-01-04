@@ -18,11 +18,13 @@ require_once 'includes.php';
 
     <link rel="stylesheet" href="cards.css">
     <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script>
          $(document).ready(function(){
             $("#myselection").change(function(){      
                $("#myselection option:selected").text();
-               var selection = $("#myselection option:selected").text() ;
+               var selection = $("#myselection option:selected").val() ;
                //document.write(selection);
                //alert(selection);
                $.ajax({
@@ -30,10 +32,11 @@ require_once 'includes.php';
                    async: true,
                    type:'post',
                    //dataType: "json",
-                   data:{ ajax:1, name:selection},
+                   data:{ ajax:1, idVal:selection},
+                   
                    success:function(response){
                        
-                       alert(response);
+                       alert(typeof(response)+ " "+response);
                        var JSONStr = response;
                        var JSONObj = JSON.parse(JSONStr);
                        //console.log(JSONObj);      // Dump all data of the Object in the console
@@ -44,25 +47,120 @@ require_once 'includes.php';
                       //document.getElementById("response").innerHTML = i;
                       function myFunction(value, index, array) {
                       i++;
+                      
                       }
+                      
                       var locName = new Array();
                       for (var j=0;j<i;j++){
                           locName[j]=JSONObj[j]["name"];
                       }
-                      displayCards(locName);
+                       // alert(locName.length);
+                       alert(JSONStr.toString());
+                      if(String(response)==="false"){
+                         document.getElementById('displayCard').innerHTML = "";
+                         alert("empty");
+                        
+
+                       }
+                       else{
+                        
+                        displayCards(locName);
+                       }
+
+  
                    }
                }) ;
             });
          });
          function displayCards(locName){
-          $("#response").html(locName);
-         }
+          //$("#response").html(locName);
+          
+          var cardsSix=`<div class="col-md-2"> <center>
+              <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
+              <div class="card-body " id="darkVoltage" >
+              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
+             
+              <br>
+              <span  class="white " id="wNum" style="margin-top:47px;">314 <small>V</small></span>
+          </div>
+
+ </center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
+<div class="card-body " id="darkCurrent" >
+            <h5 class="card-subtitle cardName white" >Average Current</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span  class="white " id="wNum" style="margin-top:47px;">314 <small>A</small></span>
+        </div>
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
+            <div class="card-body " id="darkRealPower" >
+            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span class="white " id="wNum" style="margin-top:47px;">314 <small>KW</small></span>
+        </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
+              <div class="card-body " id="darkReactive" >
+              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314 <small>KVAr</small></span>
+          </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
+                <div class="card-body " id="darkApparent" >
+                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
+                <!-- <span class="cardName"><em>Voltage</em></span> -->
+                <br>
+                <span class="white " id="wNum">314 <small>KVA</small></span>
+            </div>
+  </center>
+  </div>
+  <div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
+              <div class="card-body " id="darkPF" >
+              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314</span>
+          </div>
+</center>
+  </div>`;
+  if(locName.length!==0){
+    document.getElementById('displayCard').innerHTML = "";
+    
+    for (var j=0;j<locName.length;j++){
+      document.getElementById('displayCard').innerHTML +='<div class= "grey Regular shadow"><div class="ChildLocName" id="'+locName[j]+'">'+locName[j]+'</div><div class="row justify-content-flex-start packOfCards">'+cardsSix+'</div></div>';
+      //document.getElementById('displayCard').innerHTML += '<div class="row justify-content-flex-start">'+cardsSix+'</div></div>';
+    }
+    
+  }
+  else{
+    document.getElementById('displayCard').innerHTML= "";
+    alert("empty");
+    
+  }
+
+         
+}// display function end
 
        
       </script>
 <style>
       body{
-        background-color: white !important;
+        background-color: #F7F7F7 !important;
       }
     </style>
 
@@ -123,7 +221,7 @@ if($locs){
     $path = "";
     //foreach($locations as $l){
       $path = $lo['name'];
-      echo '<option '.iif($lo['id']==$deviceId,'selected').' value="?deviceId='.$lo['parent_location_id'].'">'.$path.'</option>';
+      echo '<option '.iif($lo['id']==$deviceId,'selected').' value='.$lo['id'].'">'.$path.'</option>';
     //}
     
     
@@ -141,24 +239,32 @@ if(!$device){
 
 }  ?>
 <style>
+
+.card:hover{
+  transform: scale(1.05);
+  transition: all 0.5s ease;
+}
 #darkCurrent{
     
   background-color: #008080; 
     border-color: #008080 !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 }
 #darkVoltage{
     background-color: #f09d61 !important;
     border-color: #f09d61 !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 }
 #darkRealPower{
     background-color: #e96100 !important;
     border-color: #e96100 !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 
 }
 #darkApparent{
@@ -166,51 +272,85 @@ if(!$device){
     border-color:  #389C38 !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 }
 #darkReactive{
     background-color: #FF00FF !important;
     border-color: #FF00FF !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 }
 #darkPF{
     background-color:#60bd42 !important;
     border-color:#60bd42 !important;
     box-shadow: 8px 8px 4px 0px rgba(0, 0, 255, .15);
     border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
 }
 
 #wNum{
     font-size:200%;
-    font-weight: bold;
+    
     margin-left: 32px;
     margin-top: 31px;
     margin-bottom: 0px !important;
     line-height: 8px !important;
     margin-right:0px;
+    font-family: 'Roboto', sans-serif;
     
 }
 
 
 .white{
     color: white;
+    font-family: 'Roboto', sans-serif !important;
+    font-weight: 300;
 }
 
 
 .cardName{
     text-align: left;
     margin-top: 2px;
-    font-size:17px;
+    font-size: 17px;
+    font-weight: normal;
+}
+.ChildLocName{
+  display: block;
+  border: 1px solid #343A40;
+  margin: 0 auto;
+  font-size: 100%;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  padding: 5 50;
+  width: fit-content;
+  font-weight:500;
+
+}
+.ChildLocName:hover {
+color: white;
+background-color: #343A40;
+transform: scale(1.05);
+transition: all 0.5s ease;
 
 }
 
-
-.card{    
+.packOfCards{
+  margin-right: 20;
 }
+.grey{
+  background-color: white;
+  margin: 20 auto;
+  padding:20 10;
+  border-radius: 10px;
+  border: 2px solid white;
+
+}
+
 small{
   font-size:15px;
   margin-right:0px;
-  font-weight:bold;
+  font-weight:400;
 }
 
 </style>
@@ -297,23 +437,17 @@ $cards = array('<div class="col-md-2"> <center>
 <!-- Cards -->
 
 
-<div id="response">efdfd</div>
+<div id="response"></div>
   
-<?php 
 
 
-for ($x = 0; $x < count($row); $x++) {
-  echo '<div class="row justify-content-flex-start">';
-  for ($y = 0; $y < $row[$x]; $y++) {
-    echo $cards[$y%6];
 
-    
-  }
-  echo '</div>';
+
+<div id="displayCard" class="row ">
+</div>
 
   
-}
-?>
+
   
 
 

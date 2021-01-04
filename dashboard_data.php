@@ -2,8 +2,8 @@
 <?php
 
 require 'includes.php';
-if (isset($_POST['ajax']) && isset($_POST['name'])){
-    $gotSelection= $_POST['name'];
+if (isset($_POST['ajax']) && isset($_POST['idVal'])){
+    $gotSelection= $_POST['idVal'];
 	//echo $gotSelection;
 	$fetchedChildLocs = childlocs($gotSelection);
 	//print_r($fetchedChildLocs);
@@ -19,11 +19,12 @@ if (isset($_POST['ajax']) && isset($_POST['name'])){
 	// }
     exit;
 }
+
 function childlocs($getSelection){
 	global $PDO;
 	$sam = $PDO->prepare("
-	SELECT name FROM locations WHERE parent_location_id =(SELECT id FROM locations WHERE name = :lid);");
-	$sam->execute(array(':lid' => $getSelection));
+	SELECT id, name FROM locations WHERE parent_location_id =:plid;");
+	$sam->execute(array(':plid' => $getSelection));
 	if($sam->rowCount()>0){
 		return $sam->fetchAll(PDO::FETCH_ASSOC);
 	}
