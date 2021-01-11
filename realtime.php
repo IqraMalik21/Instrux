@@ -11,6 +11,7 @@ pageRequiresAuthentication();
 
 $deviceId = $_GET['deviceId'];
 
+print_r(767);
 if(empty($deviceId)){
   $deviceId = $user['defaultDevice'];
 }else{

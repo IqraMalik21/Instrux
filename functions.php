@@ -1037,6 +1037,18 @@ function user_device_details($userid,$deviceId){
 	return FALSE;
 }
 
+function default_loc_id($defaultDeviceid){
+	global $PDO;
+	$sam = $PDO->prepare("
+	SELECT name FROM locations WHERE id = (SELECT location_id FROM devices WHERE id = :defaultDeviceid)");
+	$sam->execute(array(':defaultDeviceid'=>$defaultDeviceid));
+	//print_r($sam->fetchAll());
+	if($sam->rowCount()>0){
+		return $sam->fetchAll();
+	}
+	return FALSE;
+}
+
 function locs(){
 	global $PDO;
 	$sam = $PDO->prepare("

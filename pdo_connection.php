@@ -10,7 +10,7 @@ ob_start();
 
 	}
 	catch (Exception $e) {
-	if (DEBUG_MODE) {
+	if ( DEBUG_MODE ) {
 	die('Error: ' . $e->getMessage());
 	}
 	}
