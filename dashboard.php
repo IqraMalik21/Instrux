@@ -1,5 +1,145 @@
 
+<?php 
+require_once 'includes.php';
+require_once "header.php";
+pageRequiresAuthentication();
 
+
+$locs = user_locations($userId);
+if($locs){
+  if(!$locs){
+  echo '<br /><br />';
+  }
+  echo '  <form method="post">                         
+  <!-- Select Location -->
+  <div class="form-group"><div class="input-group">
+  <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-cogs"></i></span></div> 
+  <select class="form-control" name="deviceId" id="myselection" >';
+  echo '<option selected disabled>Please Select Location</option>';
+  $locations = locs();
+  foreach($locations as $lo){
+    /*
+    $path = $d['name']." > ";
+    */
+    
+    $path = "";
+    //foreach($locations as $l){
+      $path = $lo['name'];
+      echo '<option '.iif($lo['id']==$deviceId,'selected').' value='.$lo['id'].'">'.$path.'</option>';
+    //}
+    
+    
+  }
+  echo '</select></div></div> </form > 
+  ';
+}else{
+  echo display_alert("There are no devices in your account. ");
+}
+
+
+if(!$device){
+
+  // No Device Selected
+
+} 
+
+$deviceId = $_GET['deviceId'];
+
+if(empty($deviceId)){
+  $deviceId = $user['defaultDevice'];
+}else{
+  if($deviceId != $user['defaultDevice']){
+    set_user_default_device($userId,$deviceId);
+  }
+}
+
+$cards = '<div class="col-md-2"> <center>
+  <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
+              <div class="card-body " id="darkVoltage" >
+              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span  class="white " id="wNum" style="margin-top:47px;">314 <small>V</small></span>
+          </div>
+
+ </center>
+</div><div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
+<div class="card-body " id="darkCurrent" >
+            <h5 class="card-subtitle cardName white" >Average Current</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span  class="white " id="wNum" style="margin-top:47px;">314 <small>A</small></span>
+        </div>
+</center>
+</div><div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
+            <div class="card-body " id="darkRealPower" >
+            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span class="white " id="wNum" style="margin-top:47px;">314 <small>KW</small></span>
+        </div>
+
+</center>
+</div><div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
+              <div class="card-body " id="darkReactive" >
+              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314 <small>KVAr</small></span>
+          </div>
+
+</center>
+</div><div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
+                <div class="card-body " id="darkApparent" >
+                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
+                <!-- <span class="cardName"><em>Voltage</em></span> -->
+                <br>
+                <span class="white " id="wNum">314 <small>KVA</small></span>
+            </div>
+  </center>
+  </div>
+
+  <div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
+              <div class="card-body " id="darkPF" >
+              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314</span>
+          </div>
+</center>
+  </div>';
+
+  
+//echo ($deviceId);
+$default_loc = default_loc_id($deviceId);
+//print_r($default_loc[0]['name']);
+echo('<div class= "grey Regular shadow"><div class="ChildLocName" id="'.$default_loc[0]['name'].'">'.$default_loc[0]['name'].'</div><div class="row justify-content-flex-start packOfCards">'.$cards.'</div></div>');
+
+$device = user_device_details($userId,$deviceId);
+
+$currentDialLimit = currentDailLimit($deviceId);
+$realPowerLimit = 100;
+$reactivePowerLimit = 100;
+$apparentPowerLimit = 100;
+
+if($deviceId == 41){
+  $currentDialLimit = 450; 
+}
+
+if($deviceId == 103){
+  $realPowerLimit = 600;
+  $reactivePowerLimit = 400;
+  $apparentPowerLimit = 600;
+}
+
+
+
+?>
     <link rel="stylesheet" href="cards.css">
     <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -24,6 +164,7 @@
                    
                    success:function(response){
                        
+
                        //alert(response);
                        var JSONStr = response;
                        var JSONObj = JSON.parse(JSONStr);
@@ -154,141 +295,6 @@
     </style>
 
 <?php
-
-require_once 'includes.php';
-require_once "header.php";
-pageRequiresAuthentication();
-
-
-$locs = user_locations($userId);
-if($locs){
-  if(!$locs){
-  echo '<br /><br />';
-  }
-  echo '  <form method="post">                         
-  <!-- Select Location -->
-  <div class="form-group"><div class="input-group">
-  <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-cogs"></i></span></div> 
-  <select class="form-control" name="deviceId" id="myselection" >';
-  echo '<option selected disabled>Please Select Location</option>';
-  $locations = locs();
-  foreach($locations as $lo){
-    /*
-    $path = $d['name']." > ";
-    */
-    
-    $path = "";
-    //foreach($locations as $l){
-      $path = $lo['name'];
-      echo '<option '.iif($lo['id']==$deviceId,'selected').' value='.$lo['id'].'">'.$path.'</option>';
-    //}
-    
-    
-  }
-  echo '</select></div></div> </form > 
-  ';
-}else{
-  echo display_alert("There are no devices in your account. ");
-}
-
-
-if(!$device){
-
-  // No Device Selected
-
-} 
-
-$deviceId = $_GET['deviceId'];
-
-if(empty($deviceId)){
-  $deviceId = $user['defaultDevice'];
-}else{
-  if($deviceId != $user['defaultDevice']){
-    set_user_default_device($userId,$deviceId);
-  }
-}
-$cards = '<div class="col-md-2"> <center>
-  <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
-              <div class="card-body " id="darkVoltage" >
-              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span  class="white " id="wNum" style="margin-top:47px;">314 <small>V</small></span>
-          </div>
-
- </center>
-</div><div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
-<div class="card-body " id="darkCurrent" >
-            <h5 class="card-subtitle cardName white" >Average Current</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span  class="white " id="wNum" style="margin-top:47px;">314 <small>A</small></span>
-        </div>
-</center>
-</div><div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
-            <div class="card-body " id="darkRealPower" >
-            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span class="white " id="wNum" style="margin-top:47px;">314 <small>KW</small></span>
-        </div>
-
-</center>
-</div><div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
-              <div class="card-body " id="darkReactive" >
-              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314 <small>KVAr</small></span>
-          </div>
-
-</center>
-</div><div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
-                <div class="card-body " id="darkApparent" >
-                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
-                <!-- <span class="cardName"><em>Voltage</em></span> -->
-                <br>
-                <span class="white " id="wNum">314 <small>KVA</small></span>
-            </div>
-  </center>
-  </div>
-
-  <div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
-              <div class="card-body " id="darkPF" >
-              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314</span>
-          </div>
-</center>
-  </div>';
-  
-//echo ($deviceId);
-$default_loc = default_loc_id($deviceId);
-//print_r($default_loc[0]['name']);
-echo('<div class= "grey Regular shadow"><div class="ChildLocName" id="'.$default_loc[0]['name'].'">'.$default_loc[0]['name'].'</div><div class="row justify-content-flex-start packOfCards">'.$cards.'</div></div>');
-
-$device = user_device_details($userId,$deviceId);
-
-$currentDialLimit = currentDailLimit($deviceId);
-$realPowerLimit = 100;
-$reactivePowerLimit = 100;
-$apparentPowerLimit = 100;
-
-if($deviceId == 41){
-  $currentDialLimit = 450; 
-}
-
-if($deviceId == 103){
-  $realPowerLimit = 600;
-  $reactivePowerLimit = 400;
-  $apparentPowerLimit = 600;
-}
 
 
 
