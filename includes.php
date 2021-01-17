@@ -4,6 +4,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 ob_start();
+
+
 session_start();
 
 error_reporting(E_ALL & ~E_NOTICE);

@@ -5,8 +5,6 @@
     
     <script>
          $(document).ready(function(){
-    
-
             $("#myselection").change(function(){      
                $("#myselection option:selected").text();
                var selection = $("#myselection option:selected").val() ;
@@ -22,36 +20,40 @@
                    success:function(response){
                        
 
-                       //alert(response);
+                       //alert(response+typeof(response));
                        var JSONStr = response;
                        var JSONObj = JSON.parse(JSONStr);
                        //console.log(JSONObj);      // Dump all data of the Object in the console
                        //alert(JSONObj[0]["name"])
                        //$("#response").html(response);
                        var i=0;
-                      JSONObj.forEach(myFunction);
-                      //document.getElementById("response").innerHTML = i;
-                      function myFunction(value, index, array) {
-                      i++;
-                      
-                      }
-                      
-                      var locName = new Array();
-                      for (var j=0;j<i;j++){
-                          locName[j]=JSONObj[j]["name"];
-                      }
-                       // alert(locName.length);
-                      // alert(JSONStr.toString());
-                      if(String(response)==="false"){
+                       //console.log("hello"+response.trim()+"I",response=="false");
+                      if(response.trim()=="false"){
+                        //console.log("Hiiii");
                          document.getElementById('displayCard').innerHTML = "";
-                         alert("empty");
+                         //alert("empty");
                         
 
                        }
                        else{
-                        
+                        JSONObj.forEach(()=>{i++});
+                        var locName = new Array();
+                        for (var j=0;j<i;j++){
+                            locName[j]=JSONObj[j]["name"];
+                        }
                         displayCards(locName);
                        }
+                      
+                      //document.getElementById("response").innerHTML = i;
+                      //function myFunction(value, index, array) {
+                      //i++;
+                      
+                      //}
+                      
+                     
+                       // alert(locName.length);
+                      // alert(JSONStr.toString());
+                      
 
   
                    }
@@ -272,7 +274,7 @@ $cards='<div class="col-md-2"> <center>
 //echo ($deviceId);
 $default_loc = default_loc_id($deviceId);
 //$default_loc_name = $default_loc[0]['name'];
-echo('<div class= "grey Regular shadow"><div class="ChildLocName" id="'.$default_loc[0]['name'].'">'.$default_loc[0]['name'].'</div><div class="row justify-content-flex-start packOfCards">'.$cards.'</div></div>');
+//echo('<div class= "grey Regular shadow"><div class="ChildLocName" id="'.$default_loc[0]['name'].'">'.$default_loc[0]['name'].'</div><div class="row justify-content-flex-start packOfCards">'.$cards.'</div></div>');
  
 $device = user_device_details($userId,$deviceId);
 
@@ -440,6 +442,7 @@ small{
 
 
 <div id="displayCard" class="row ">
+<div class= "grey Regular shadow"><div class="ChildLocName" id="<?php echo $default_loc[0]['name']?>"><?php echo $default_loc[0]['name']?></div><div class="row justify-content-flex-start packOfCards"><?php echo $cards?></div></div>
 </div>
 
   
