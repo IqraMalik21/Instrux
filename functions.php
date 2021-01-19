@@ -392,6 +392,20 @@ Highcharts.chart('".$containerId."', {
 ";
 }
 
+
+
+function cardValues($dev_id){ // to select card Values
+	global $PDO;
+	$sam = $PDO->prepare("
+	SELECT (averageLineLineVoltage), (totalLineCurrent), ROUND((energyValue/1000), 3) AS eV, ROUND((totalRealPower/1000), 3) AS tRP, ROUND((totalApparentPower/1000), 3) AS tAP, 
+	ROUND((totalReactivePower/1000),3) AS tReP, powerfactorAverage AS pfA FROM readings WHERE device_id=:devid ORDER BY id DESC LIMIT 1");
+	$sam->execute(array(':devid' => $dev_id));
+	if($sam->rowCount()>0){
+		return $sam->fetchAll(PDO::FETCH_ASSOC);
+	}
+	return FALSE;
+}
+
 function getAllLocations($userId){
 	global $PDO;
 	$user = getUserDetails($userId);

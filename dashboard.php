@@ -3,150 +3,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     
-    <script>
-         $(document).ready(function(){
-            $("#myselection").change(function(){      
-               $("#myselection option:selected").text();
-               var selection = $("#myselection option:selected").val() ;
-               //document.write(selection);
-               //alert(selection);
-               $.ajax({
-                   url: 'dashboard_data.php',
-                   async: true,
-                   type:'post',
-                   //dataType: "json",
-                   data:{ ajax:1, idVal:selection},
-                   
-                   success:function(response){
-                       
 
-                       //alert(response+typeof(response));
-                       var JSONStr = response;
-                       var JSONObj = JSON.parse(JSONStr);
-                       //console.log(JSONObj);      // Dump all data of the Object in the console
-                       //alert(JSONObj[0]["name"])
-                       //$("#response").html(response);
-                       var i=0;
-                       //console.log("hello"+response.trim()+"I",response=="false");
-                      if(response.trim()=="false"){
-                        //console.log("Hiiii");
-                         document.getElementById('displayCard').innerHTML = "";
-                         //alert("empty");
-                        
-
-                       }
-                       else{
-                        JSONObj.forEach(()=>{i++});
-                        var locName = new Array();
-                        for (var j=0;j<i;j++){
-                            locName[j]=JSONObj[j]["name"];
-                        }
-                        displayCards(locName);
-                       }
-                      
-                      //document.getElementById("response").innerHTML = i;
-                      //function myFunction(value, index, array) {
-                      //i++;
-                      
-                      //}
-                      
-                     
-                       // alert(locName.length);
-                      // alert(JSONStr.toString());
-                      
-
-  
-                   }
-               }) ;
-            });
-         });
-         function displayCards(locName){
-          //$("#response").html(locName);
-          
-          var cardsSix=`<div class="col-md-2"> <center>
-              <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
-              <div class="card-body " id="darkVoltage" >
-              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
-             
-              <br>
-              <span  class="white " id="wNum" style="margin-top:47px;">314 <small>V</small></span>
-          </div>
-
- </center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
-<div class="card-body " id="darkCurrent" >
-            <h5 class="card-subtitle cardName white" >Average Current</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span  class="white " id="wNum" style="margin-top:47px;">314 <small>A</small></span>
-        </div>
-</center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
-            <div class="card-body " id="darkRealPower" >
-            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span class="white " id="wNum" style="margin-top:47px;">314 <small>KW</small></span>
-        </div>
-
-</center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
-              <div class="card-body " id="darkReactive" >
-              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314 <small>KVAr</small></span>
-          </div>
-
-</center>
-</div>
-<div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
-                <div class="card-body " id="darkApparent" >
-                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
-                <!-- <span class="cardName"><em>Voltage</em></span> -->
-                <br>
-                <span class="white " id="wNum">314 <small>KVA</small></span>
-            </div>
-  </center>
-  </div>
-  <div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
-              <div class="card-body " id="darkPF" >
-              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314</span>
-          </div>
-</center>
-  </div>`;
-  document.getElementById('displayCard').innerHTML = "  ";
-  $("#displayCard").empty()
-  if(locName.length!==0){
-   
-    for (var j=0;j<locName.length;j++){
-      document.getElementById('displayCard').innerHTML +='<div class= "grey Regular shadow"><div class="ChildLocName" id="'+locName[j]+'">'+locName[j]+'</div><div class="row justify-content-flex-start packOfCards">'+cardsSix+'</div></div>';
-      //document.getElementById('displayCard').innerHTML += '<div class="row justify-content-flex-start">'+cardsSix+'</div></div>';
-    }
-    
-  }
-  else{
-    document.getElementById('displayCard').innerHTML= "";
-    alert("empty");
-    
-  }
-
-         
-}// display function end
-
-       
-      </script>
 <style>
       body{
         background-color: #F7F7F7 !important;
@@ -159,6 +16,87 @@ require_once "header.php";
 pageRequiresAuthentication();
 
 
+
+
+$deviceId = $_GET['deviceId'];
+
+if(empty($deviceId)){
+  $deviceId = $user['defaultDevice'];
+}else{
+  if($deviceId != $user['defaultDevice']){
+    set_user_default_device($userId,$deviceId);
+  }
+}
+$card_Value = cardValues($deviceId);
+print_r($card_Value);
+
+$cards='<div class="col-md-2"> <center>
+              <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
+              <div class="card-body " id="darkVoltage" >
+              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
+             
+              <br>
+              <span  class="white " id="wNum" style="margin-top:47px;">'.$card_Value[0]['averageLineLineVoltage'].'<small>V</small></span>
+          </div>
+
+ </center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
+<div class="card-body " id="darkCurrent" >
+            <h5 class="card-subtitle cardName white" >Average Current</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span  class="white " id="wNum" style="margin-top:47px;">'.$card_Value[0]['totalLineCurrent'].'<small>A</small></span>
+        </div>
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
+            <div class="card-body " id="darkRealPower" >
+            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span class="white " id="wNum" style="margin-top:47px;">'.$card_Value[0]['tRP'].'<small>KW</small></span>
+        </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
+              <div class="card-body " id="darkReactive" >
+              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">'.$card_Value[0]['tReP'].'<small>KVAr</small></span>
+          </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
+                <div class="card-body " id="darkApparent" >
+                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
+                <!-- <span class="cardName"><em>Voltage</em></span> -->
+                <br>
+                <span class="white " id="wNum">'.$card_Value[0]['tAP'].'<small>KVA</small></span>
+            </div>
+  </center>
+  </div>
+  <div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
+              <div class="card-body " id="darkPF" >
+              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">'.iif($card_Value[0]['pfA']==null, "N/A",$card_Value[0]['pfA'] ).'</span>
+          </div>
+</center>
+  </div>';
+  
+
+$default_loc = default_loc_id($deviceId); // select default location from database to display cards
+
 $locs = user_locations($userId);
 if($locs){
   if(!$locs){
@@ -169,7 +107,7 @@ if($locs){
   <div class="form-group"><div class="input-group">
   <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-cogs"></i></span></div> 
   <select class="form-control" name="deviceId" id="myselection" >';
-  echo '<option selected disabled>Please Select Location</option>';
+  echo '<option selected disabled>'.$default_loc[0]['name'].'</option>';
   $locations = locs();
   foreach($locations as $lo){
     /*
@@ -197,84 +135,6 @@ if(!$device){
 
 } 
 
-$deviceId = $_GET['deviceId'];
-
-if(empty($deviceId)){
-  $deviceId = $user['defaultDevice'];
-}else{
-  if($deviceId != $user['defaultDevice']){
-    set_user_default_device($userId,$deviceId);
-  }
-}
-
-$cards='<div class="col-md-2"> <center>
-              <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
-              <div class="card-body " id="darkVoltage" >
-              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
-             
-              <br>
-              <span  class="white " id="wNum" style="margin-top:47px;">314 <small>V</small></span>
-          </div>
-
- </center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
-<div class="card-body " id="darkCurrent" >
-            <h5 class="card-subtitle cardName white" >Average Current</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span  class="white " id="wNum" style="margin-top:47px;">314 <small>A</small></span>
-        </div>
-</center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
-            <div class="card-body " id="darkRealPower" >
-            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
-            <!-- <span class="cardName"><em>Voltage</em></span> -->
-            <br>
-            <span class="white " id="wNum" style="margin-top:47px;">314 <small>KW</small></span>
-        </div>
-
-</center>
-</div>
-<div class="col-md-2"><center>
-<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
-              <div class="card-body " id="darkReactive" >
-              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314 <small>KVAr</small></span>
-          </div>
-
-</center>
-</div>
-<div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
-                <div class="card-body " id="darkApparent" >
-                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
-                <!-- <span class="cardName"><em>Voltage</em></span> -->
-                <br>
-                <span class="white " id="wNum">314 <small>KVA</small></span>
-            </div>
-  </center>
-  </div>
-  <div class="col-md-2"><center>
-  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
-              <div class="card-body " id="darkPF" >
-              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
-              <!-- <span class="cardName"><em>Voltage</em></span> -->
-              <br>
-              <span class="white " id="wNum">314</span>
-          </div>
-</center>
-  </div>';
-  
-//echo ($deviceId);
-$default_loc = default_loc_id($deviceId);
-//$default_loc_name = $default_loc[0]['name'];
-//echo('<div class= "grey Regular shadow"><div class="ChildLocName" id="'.$default_loc[0]['name'].'">'.$default_loc[0]['name'].'</div><div class="row justify-content-flex-start packOfCards">'.$cards.'</div></div>');
  
 $device = user_device_details($userId,$deviceId);
 
@@ -352,7 +212,7 @@ if($deviceId == 103){
 #wNum{
     font-size:200%;
     
-    margin-left: 32px;
+    margin-left: 4px;
     margin-top: 31px;
     margin-bottom: 0px !important;
     line-height: 8px !important;
@@ -417,24 +277,6 @@ small{
 
 
 
-
-
-          
-<?php 
-
-
- 
-  
-  $row = array(2,4,7)
-  
-  ?>
-
-
-
-
-<!-- Cards -->
-
-
 <div id="response"></div>
   
 
@@ -445,65 +287,132 @@ small{
 <div class= "grey Regular shadow"><div class="ChildLocName" id="<?php echo $default_loc[0]['name']?>"><?php echo $default_loc[0]['name']?></div><div class="row justify-content-flex-start packOfCards"><?php echo $cards?></div></div>
 </div>
 
-  
 
-  
+<script>
+         $(document).ready(function(){
+            $("#myselection").change(function(){   //runs when a change occurs in dropdown   
+               $("#myselection option:selected").text();
+               var selection = $("#myselection option:selected").val() ; //save selected value 
+               
+               $.ajax({
+                   url: 'dashboard_data.php',
+                   async: true,
+                   type:'post',
+                   //dataType: "json",
+                   data:{ ajax:1, idVal:selection},
+                   
+                   success:function(response){
+                       
 
-
-  
-
-
-
-
-<!-- <div class="cardSection container">
-          <div class="serviceCard row justify-content-left">
-            
-            <div class="card mt-4 mx-4 border rounded" style="width: 10rem; height:9rem; vertical-align: middle; ">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-            <div class="card col col-md-2 mt-4 mx-4 border rounded" style="width: 10rem; height:9rem; vertical-align: middle;">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-            <div class="card col col-md-2 mt-4 mx-4 border rounded" style="width: 10rem; height:9rem; vertical-align: middle;">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-            <div class="card col col-md-2 mt-4 mx-4 border rounded" style="width: 10rem; height:9rem; vertical-align: middle;">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-            <div class="card col col-md-2 mt-4 mx-3 border rounded" style="width: 10rem; height:9rem; vertical-align: middle;">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-            <div class="card col col-md-2 mt-4 mx-4 border rounded" style="width: 10rem; height:9rem; vertical-align: middle;">
-              <div class="card-body " >
-
-              <div class="cardText">314</div>
-                
-              </div>
-            </div>
-
-        
+                       
+                       var JSONStr = response;
+                       var JSONObj = JSON.parse(JSONStr); //convert JSON string to obj
+                       var i=0;
+                      if(response.trim()=="false"){  // trim extra character in response and check it
+                         document.getElementById('displayCard').innerHTML = "";
+                       }
+                      else{
+                        JSONObj.forEach(()=>{i++}); //count no of rows
+                        var locName = new Array();   // save name of child locs to array
+                        for (var j=0;j<i;j++){
+                            locName[j]=JSONObj[j]["name"];
+                        }
+                        displayCards(locName); // display cards
+                       }
+                   }
+               }) ;
+            });
+         });
+         function displayCards(locName){
+          var cardsSix=`<div class="col-md-2"> <center>
+              <div class="card mt-4 mx-4  Regular shadow " style="width: 11rem; height:10rem;"  id="voltage">
+              <div class="card-body " id="darkVoltage" >
+              <h5 class="card-subtitle cardName white" >Average Voltage </h5>
+             
+              <br>
+              <span  class="white " id="wNum" style="margin-top:47px;">314<small>V</small></span>
           </div>
-</div> -->
-<!-- Cards -->
+
+ </center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="current">
+<div class="card-body " id="darkCurrent" >
+            <h5 class="card-subtitle cardName white" >Average Current</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span  class="white " id="wNum" style="margin-top:47px;">314<small>A</small></span>
+        </div>
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="realPower">
+            <div class="card-body " id="darkRealPower" >
+            <h5 class="card-subtitle cardName white" >Real Power Total</h5>
+            <!-- <span class="cardName"><em>Voltage</em></span> -->
+            <br>
+            <span class="white " id="wNum" style="margin-top:47px;">314<small>KW</small></span>
+        </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+<div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="reactive">
+              <div class="card-body " id="darkReactive" >
+              <h5 class="card-subtitle cardName white" >Reactive Power Total</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314 <small>KVAr</small></span>
+          </div>
+
+</center>
+</div>
+<div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem;"  id="aparent">
+                <div class="card-body " id="darkApparent" >
+                <h5 class="card-subtitle mx-0 cardName white" >Apparent Power Total</h5>
+                <!-- <span class="cardName"><em>Voltage</em></span> -->
+                <br>
+                <span class="white " id="wNum">314 <small>KVA</small></span>
+            </div>
+  </center>
+  </div>
+  <div class="col-md-2"><center>
+  <div class="card mt-4 mx-4 border Regular shadow rounded" style="width: 11rem; height:10rem; line-height: 20px"  id="pf">
+              <div class="card-body " id="darkPF" >
+              <h5 class="card-subtitle mx-0 cardName white" >Average Power Factor</h5>
+              <!-- <span class="cardName"><em>Voltage</em></span> -->
+              <br>
+              <span class="white " id="wNum">314</span>
+          </div>
+</center>
+  </div>`;
+  document.getElementById('displayCard').innerHTML = "  ";
+  $("#displayCard").empty()
+  if(locName.length!==0){
+   
+    for (var j=0;j<locName.length;j++){
+      document.getElementById('displayCard').innerHTML +='<div class= "grey Regular shadow"><div class="ChildLocName" id="'+locName[j]+'">'+locName[j]+'</div><div class="row justify-content-flex-start packOfCards">'+cardsSix+'</div></div>';
+    }  
+  }
+  else{
+    document.getElementById('displayCard').innerHTML= "";
+    alert("empty");
+  }       
+}// display function end
+
+</script>
+
+  
+
+  
+
+
+  
+
+
+
+
+
 
           <?php require_once 'footer.php'; ?>
